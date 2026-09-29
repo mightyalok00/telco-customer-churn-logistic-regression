@@ -18,6 +18,7 @@ if str(SRC_DIR) not in sys.path:
 
 from analysis import (  # noqa: E402
     TARGET,
+    add_business_features,
     coefficient_table,
     evaluate_binary_model,
     risk_segments,
