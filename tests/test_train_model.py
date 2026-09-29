@@ -7,7 +7,10 @@ import train_model as trainer
 
 def make_training_csv(path: Path) -> None:
     """Write a compact two-class dataset for fast training tests."""
-    rows = ["customerID,tenure,TotalCharges,MonthlyCharges,Contract,PhoneService,OnlineSecurity,Churn"]
+    rows = [
+        "customerID,tenure,TotalCharges,MonthlyCharges,Contract,"
+        "PhoneService,OnlineSecurity,Churn"
+    ]
     contracts = ["Month-to-month", "One year", "Two year"]
     for index in range(20):
         tenure = index + 1
