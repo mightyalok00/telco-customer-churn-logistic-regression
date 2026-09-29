@@ -16,9 +16,16 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from analysis import (  # noqa: E402
-    DEFAULT_C_VALUES, DEFAULT_CV_FOLDS, DEFAULT_TEST_SIZE, RANDOM_STATE,
-    TARGET, add_business_features, build_logistic_pipeline, clean_data,
-    evaluate_binary_model, load_data,
+    DEFAULT_C_VALUES,
+    DEFAULT_CV_FOLDS,
+    DEFAULT_TEST_SIZE,
+    RANDOM_STATE,
+    TARGET,
+    add_business_features,
+    build_logistic_pipeline,
+    clean_data,
+    evaluate_binary_model,
+    load_data,
 )
 
 DATA = ROOT / "data" / "raw" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
@@ -66,8 +73,14 @@ def main() -> None:
     search = train_model(X_train, y_train)
     metrics = evaluate_model(search, X_test, y_test)
     LOGGER.info("Best parameters: %s", search.best_params_)
-    LOGGER.info("Cross-validated ROC-AUC: %.4f", search.best_score_)
-    LOGGER.info("Holdout metrics: %s", {k: round(v, 4) for k, v in metrics.items()})
+    LOGGER.info(
+        "Cross-validated ROC-AUC: %.4f",
+        search.best_score_,
+    )
+    LOGGER.info(
+        "Holdout metrics: %s",
+        {key: round(value, 4) for key, value in metrics.items()},
+    )
     LOGGER.info(
         "Classification report:\n%s",
         classification_report(y_test, search.predict(X_test)),
