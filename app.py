@@ -157,18 +157,31 @@ with tabs[0]:
     st.subheader("Executive Overview")
     total_customers = len(data)
     churn_rate = (data[TARGET] == "Yes").mean()
-    avg_monthly = data["MonthlyCharges"].mean()
     high_risk = int((test_prob >= 0.60).sum())
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        metric_card("Customers", f"{total_customers:,}", "Rows in the supplied dataset.")
+        metric_card(
+            "Customers", f"{total_customers:,}", "Rows in the supplied dataset."
+        )
     with c2:
-        metric_card("Observed churn", fmt_pct(churn_rate), "Observed churn rate in the dataset.")
+        metric_card(
+            "Observed churn",
+            fmt_pct(churn_rate),
+            "Observed churn rate in the dataset.",
+        )
     with c3:
-        metric_card("Holdout ROC-AUC", f"{metrics['roc_auc']:.3f}", "Discrimination on the untouched holdout set.")
+        metric_card(
+            "Holdout ROC-AUC",
+            f"{metrics['roc_auc']:.3f}",
+            "Discrimination on the untouched holdout set.",
+        )
     with c4:
-        metric_card("High-risk holdout", f"{high_risk:,}", "Holdout customers with predicted probability ≥ 60%.")
+        metric_card(
+            "High-risk holdout",
+            f"{high_risk:,}",
+            "Holdout customers with predicted probability ≥ 60%.",
+        )
 
     left, right = st.columns(2)
     with left:
@@ -249,7 +262,10 @@ with tabs[1]:
 
     e1, e2, e3 = st.columns(3)
     e1.metric("Matching customers", f"{len(filtered):,}")
-    e2.metric("Observed churn", fmt_pct((filtered[TARGET] == "Yes").mean()) if len(filtered) else "—")
+    e2.metric(
+        "Observed churn",
+        fmt_pct((filtered[TARGET] == "Yes").mean()) if len(filtered) else "—",
+    )
     e3.metric("Average monthly charge", f"₹{filtered['MonthlyCharges'].mean():.2f}" if len(filtered) else "—")
 
     st.markdown("#### Monthly charges vs. tenure")
@@ -288,19 +304,43 @@ with tabs[2]:
         p1, p2, p3 = st.columns(3)
         with p1:
             tenure = st.number_input("Tenure (months)", 0, 100, 12)
-            monthly = st.number_input("Monthly charges", 0.0, 300.0, 70.0, step=1.0)
-            total = st.number_input("Total charges", 0.0, 50000.0, float(tenure * monthly), step=10.0)
-            contract = st.selectbox("Contract", sorted(data["Contract"].dropna().unique()))
+            monthly = st.number_input(
+                "Monthly charges", 0.0, 300.0, 70.0, step=1.0
+            )
+            total = st.number_input(
+                "Total charges",
+                0.0,
+                50000.0,
+                float(tenure * monthly),
+                step=10.0,
+            )
+            contract = st.selectbox(
+                "Contract", sorted(data["Contract"].dropna().unique())
+            )
         with p2:
-            internet = st.selectbox("Internet service", sorted(data["InternetService"].dropna().unique()))
-            payment = st.selectbox("Payment method", sorted(data["PaymentMethod"].dropna().unique()))
-            paperless = st.selectbox("Paperless billing", sorted(data["PaperlessBilling"].dropna().unique()))
+            internet = st.selectbox(
+                "Internet service", sorted(data["InternetService"].dropna().unique())
+            )
+            payment = st.selectbox(
+                "Payment method", sorted(data["PaymentMethod"].dropna().unique())
+            )
+            paperless = st.selectbox(
+                "Paperless billing", sorted(data["PaperlessBilling"].dropna().unique())
+            )
             senior = st.selectbox("Senior citizen", [0, 1])
         with p3:
-            partner = st.selectbox("Partner", sorted(data["Partner"].dropna().unique()))
-            dependents = st.selectbox("Dependents", sorted(data["Dependents"].dropna().unique()))
-            phone = st.selectbox("Phone service", sorted(data["PhoneService"].dropna().unique()))
-            multiple = st.selectbox("Multiple lines", sorted(data["MultipleLines"].dropna().unique()))
+            partner = st.selectbox(
+                "Partner", sorted(data["Partner"].dropna().unique())
+            )
+            dependents = st.selectbox(
+                "Dependents", sorted(data["Dependents"].dropna().unique())
+            )
+            phone = st.selectbox(
+                "Phone service", sorted(data["PhoneService"].dropna().unique())
+            )
+            multiple = st.selectbox(
+                "Multiple lines", sorted(data["MultipleLines"].dropna().unique())
+            )
         submitted = st.form_submit_button("Predict churn risk", type="primary")
 
     if submitted:
@@ -326,13 +366,18 @@ with tabs[2]:
         a, b, c = st.columns(3)
         a.metric("Predicted churn probability", f"{probability:.1%}")
         b.metric("Risk segment", segment)
-        c.metric("Decision at current threshold", "Flag" if probability >= threshold else "Do not flag")
+        c.metric(
+            "Decision at current threshold",
+            "Flag" if probability >= threshold else "Do not flag",
+        )
 
         st.progress(probability)
         if segment == "High":
             st.error("High predicted risk: probability is at or above 60%.")
         elif segment == "Medium":
-            st.warning("Medium predicted risk: probability is between 30% and 60%.")
+            st.warning(
+                "Medium predicted risk: probability is between 30% and 60%."
+            )
         else:
             st.success("Low predicted risk: probability is below 30%.")
 
