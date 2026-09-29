@@ -9,5 +9,4 @@ env/
 *.egg-info/
 reports/generated/
 models/
-data/raw/
 data/processed/
