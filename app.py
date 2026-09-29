@@ -194,7 +194,12 @@ with tabs[0]:
     left, right = st.columns(2)
     with left:
         st.markdown("#### Churn distribution")
-        churn_counts = data[TARGET].value_counts().rename_axis("Churn").reset_index(name="Customers")
+        churn_counts = (
+            data[TARGET]
+            .value_counts()
+            .rename_axis("Churn")
+            .reset_index(name="Customers")
+        )
         fig = px.bar(
             churn_counts,
             x="Churn",
@@ -232,7 +237,8 @@ with tabs[0]:
 
     st.info(
         f"Best C from 5-fold ROC-AUC tuning: {model.best_params_['model__C']}. "
-        "The dashboard uses the same leakage-safe preprocessing pipeline as the project."
+        "The dashboard uses the same leakage-safe preprocessing pipeline "
+        "as the project."
     )
 
 with tabs[1]:
@@ -357,7 +363,10 @@ with tabs[1]:
         "Observed churn",
         fmt_pct((filtered[TARGET] == "Yes").mean()) if len(filtered) else "—",
     )
-    e3.metric("Average monthly charge", f"₹{filtered['MonthlyCharges'].mean():.2f}" if len(filtered) else "—")
+    e3.metric(
+        "Average monthly charge",
+        f"₹{filtered['MonthlyCharges'].mean():.2f}" if len(filtered) else "—",
+    )
 
     st.markdown("#### Monthly charges vs. tenure")
     if len(filtered):
@@ -388,7 +397,8 @@ with tabs[2]:
     st.subheader("Risk Predictor")
     st.caption(
         "Enter a customer profile to estimate churn probability. "
-        "This is a predictive portfolio demonstration, not an automated decision system."
+        "This is a predictive portfolio demonstration, not an automated "
+        "decision system."
     )
 
     with st.form("risk_predictor"):
