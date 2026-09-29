@@ -17,17 +17,9 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from analysis import (  # noqa: E402
-    DEFAULT_C_VALUES,
-    DEFAULT_CV_FOLDS,
-    DEFAULT_TEST_SIZE,
-    RANDOM_STATE,
     TARGET,
-    add_business_features,
-    build_logistic_pipeline,
-    clean_data,
     coefficient_table,
     evaluate_binary_model,
-    load_data,
     risk_segments,
     threshold_table,
 )
@@ -89,12 +81,6 @@ st.markdown(
 )
 
 
-@st.cache_data(show_spinner=False)
-def load_dashboard_data(path: str) -> pd.DataFrame:
-    """Load, clean, and engineer the project dataset."""
-    return add_business_features(clean_data(load_data(path)))
-
-
 def fmt_pct(value: float) -> str:
     """Format a decimal metric as a percentage."""
     return f"{value:.1%}"
@@ -109,7 +95,7 @@ if not DATA_PATH.exists():
     st.error(f"Dataset not found: {DATA_PATH}")
     st.stop()
 
-model, data, X_train, X_test, y_train, y_test = get_project_model(str(DATA_PATH))
+model, data, X_test, y_test = get_project_model(str(DATA_PATH))
 
 test_prob = model.predict_proba(X_test)[:, 1]
 threshold = st.sidebar.slider(
