@@ -1,12 +1,22 @@
 # Data
 
-The project uses the supplied Telco Customer Churn CSV.
+## Dataset
 
 Expected file:
+
 `data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv`
 
-The source file contains 7,043 rows and 21 columns. The target is `Churn`.
+The repository includes the supplied Telco Customer Churn CSV so a fresh clone can reproduce the analysis without a manual dataset download.
 
-`TotalCharges` is supplied as text and contains blank values that become missing after numeric coercion. The modeling pipeline handles this safely through imputation learned from training data.
+- Rows: **7,043**
+- Columns: **21**
+- Target: `Churn`
+- Identifier: `customerID`
 
-For redistribution/licensing questions, verify the dataset's original Kaggle/source terms before publishing the raw CSV publicly.
+## Data quality
+
+`TotalCharges` is supplied as text and contains blank values. Cleaning converts it to numeric values; invalid/blank entries become missing values and are handled by training-set imputation.
+
+## Redistribution note
+
+The raw CSV is included for reproducibility. Before redistributing the repository or dataset independently, verify the original dataset's licensing and source terms.
