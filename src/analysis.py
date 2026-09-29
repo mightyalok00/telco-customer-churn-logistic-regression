@@ -110,11 +110,23 @@ def build_logistic_pipeline(
         raise ValueError("penalty must be either 'l1' or 'l2'.")
     if C <= 0:
         raise ValueError("C must be greater than zero.")
-    solver = "liblinear" if penalty == "l1" else "lbfgs"
-    model = LogisticRegression(
-        C=C, penalty=penalty, solver=solver, class_weight=class_weight,
-        max_iter=3000, random_state=RANDOM_STATE,
-    )
+    if penalty == "l1":
+        model = LogisticRegression(
+            C=C,
+            penalty="l1",
+            solver="liblinear",
+            class_weight=class_weight,
+            max_iter=3000,
+            random_state=RANDOM_STATE,
+        )
+    else:
+        model = LogisticRegression(
+            C=C,
+            solver="lbfgs",
+            class_weight=class_weight,
+            max_iter=3000,
+            random_state=RANDOM_STATE,
+        )
     return Pipeline([("preprocessor", build_preprocessor(X)), ("model", model)])
 
 
