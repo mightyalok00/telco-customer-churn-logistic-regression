@@ -56,7 +56,7 @@ st.markdown(
     """
     <div class="hero">
       <h1>📚 Telco Churn — Complete Project Q&A</h1>
-      <p>157 questions across 18 analytical sections, answered from the supplied dataset,
+      <p>157 questions across 18 analytical sections, answered from the supplied
       the fitted Logistic Regression workflow, and the documented project
       methodology.</p>
     </div>
