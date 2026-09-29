@@ -1,6 +1,29 @@
 # Telco Customer Churn — Logistic Regression
 
-An end-to-end, business-focused customer churn project built around **interpretable Logistic Regression**.
+An end-to-end, business-focused customer churn project built around **interpretable Logistic Regression**, with a production-style **Streamlit analytics dashboard**.
+
+## 🚀 Live application
+
+Run the dashboard locally:
+
+```bash
+streamlit run app.py
+```
+
+The dashboard provides:
+
+- Executive KPI overview
+- Churn and contract analysis
+- Interactive customer filtering
+- Customer-level churn-risk prediction
+- Adjustable classification threshold
+- Precision / recall / F1 threshold analysis
+- Holdout confusion matrix
+- Logistic Regression coefficient and odds-ratio analysis
+- Low / Medium / High customer-risk segmentation
+- CSV export of model coefficients
+
+The dashboard uses the same preprocessing and tuning methodology as the core project. It trains the model automatically on first load and caches the trained estimator for the session.
 
 ## Results at a glance
 
@@ -31,6 +54,7 @@ Raw CSV
   -> threshold analysis
   -> coefficient / odds-ratio interpretation
   -> customer risk segmentation
+  -> Streamlit decision-support dashboard
 ```
 
 ## What this project covers
@@ -44,6 +68,7 @@ Raw CSV
 - Accuracy, Precision, Recall, F1, ROC-AUC, PR-AUC, Log Loss, and Brier Score
 - Confusion matrix and probability-threshold analysis
 - Coefficients, odds ratios, probability interpretation, and risk segments
+- Interactive Streamlit exploration and prediction
 - Robustness, limitations, and business-impact discussion
 
 ## Dataset
@@ -58,12 +83,16 @@ The dataset contains **7,043 rows and 21 columns** with `Churn` as the binary ta
 
 ```text
 telco-customer-churn-logistic-regression/
+├── app.py
+├── .streamlit/config.toml
 ├── data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
 ├── notebooks/telco_customer_churn_logistic_regression.ipynb
 ├── src/
 │   ├── analysis.py
 │   └── train_model.py
-├── tests/test_analysis.py
+├── tests/
+│   ├── test_analysis.py
+│   └── test_train_model.py
 ├── docs/
 │   ├── PROJECT_QUESTIONS.md
 │   └── Telco_Customer_Churn_Project_Questions.docx
@@ -81,10 +110,21 @@ python -m venv .venv
 # Windows:
 .venv\Scripts\activate
 pip install -r requirements.txt
+```
+
+### Launch the Streamlit dashboard
+
+```bash
+streamlit run app.py
+```
+
+### Run the notebook
+
+```bash
 jupyter notebook
 ```
 
-Open the notebook at `notebooks/telco_customer_churn_logistic_regression.ipynb`.
+Open `notebooks/telco_customer_churn_logistic_regression.ipynb`.
 
 ### Run tests
 
@@ -112,17 +152,33 @@ python src/train_model.py
 
 The training script performs a stratified holdout split, five-fold ROC-AUC tuning over Logistic Regression `C`, evaluates the untouched holdout set, and saves the fitted pipeline to `models/logistic_regression_pipeline.joblib`.
 
+## Streamlit deployment
+
+For Streamlit Community Cloud:
+
+1. Push the repository to GitHub.
+2. Create a new Streamlit app.
+3. Select this repository.
+4. Set the main file to `app.py`.
+5. Deploy.
+
+The dataset is included in the repository, so the dashboard does not require a separate data download.
+
 ## Quality controls
 
 GitHub Actions runs:
 
 1. Ruff linting
 2. Pytest with an 85% coverage gate
-3. Python compilation checks
+3. Python and Streamlit-app compilation checks
+
+The latest verified CI run reached **15 passing tests and 97.44% source coverage**.
 
 ## Analytical principle
 
 Observed associations should not automatically be interpreted as causal effects. The dataset supports predictive and descriptive analysis; it does not establish that changing a feature will cause churn to increase or decrease.
+
+The Streamlit predictor is intended for educational and portfolio demonstration. It should not be used as an automated customer decision system without business validation, monitoring, fairness review, cost analysis, and appropriate governance.
 
 ## Reproducibility
 
