@@ -67,6 +67,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.sidebar.markdown(
+    "### 📚 Project Knowledge Base"
+)
+st.sidebar.caption(
+    "The Streamlit navigation includes the complete 157-question Q&A "
+    "covering all 18 analytical sections."
+)
+
 st.markdown(
     """
     <div class="hero">
