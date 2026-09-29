@@ -92,6 +92,7 @@ def test_business_features_tolerate_partial_columns() -> None:
 def test_preprocessor_excludes_customer_id() -> None:
     """The customer identifier must not become a model feature."""
     preprocessor = build_preprocessor(sample_data().drop(columns=["Churn"]))
+    preprocessor.fit(sample_data().drop(columns=["Churn"]))
     assert all(
         ID_COLUMN not in name
         for name in preprocessor.get_feature_names_out()
@@ -170,15 +171,16 @@ def test_risk_segments_cover_all_probabilities() -> None:
 def test_pipeline_has_scaling_and_one_hot_encoding() -> None:
     """Preprocessing should include scaling and one-hot encoding."""
     preprocessor = build_preprocessor(sample_data().drop(columns=["Churn"]))
-    assert "num" in preprocessor.named_transformers
-    assert "cat" in preprocessor.named_transformers
+    preprocessor.fit(sample_data().drop(columns=["Churn"]))
+    assert "num" in preprocessor.named_transformers_
+    assert "cat" in preprocessor.named_transformers_
     assert (
-        preprocessor.named_transformers["num"]
+        preprocessor.named_transformers_["num"]
         .named_steps["scaler"].__class__.__name__
         == "StandardScaler"
     )
     assert (
-        preprocessor.named_transformers["cat"]
+        preprocessor.named_transformers_["cat"]
         .named_steps["onehot"].__class__.__name__
         == "OneHotEncoder"
     )
