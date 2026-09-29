@@ -6,7 +6,6 @@ import re
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 import streamlit as st
 from sklearn.model_selection import GridSearchCV, train_test_split
@@ -30,7 +29,7 @@ from analysis import (
     load_data,
     risk_segments,
     threshold_table,
-)
+)  # noqa: E402
 
 DATA_PATH = ROOT / "data" / "raw" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
 QUESTIONS_PATH = ROOT / "docs" / "PROJECT_QUESTIONS.md"
@@ -66,7 +65,8 @@ st.markdown(
     <div class="hero">
       <h1>📚 Telco Churn — Complete Project Q&A</h1>
       <p>157 questions across 18 analytical sections, answered from the supplied dataset,
-      the fitted Logistic Regression workflow, and the documented project methodology.</p>
+      the fitted Logistic Regression workflow, and the documented project
+      methodology.</p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -157,7 +157,10 @@ def answer(question: str, data: pd.DataFrame, model, y_test, probabilities):
         missing = data.isna().sum()
         missing = missing[missing > 0]
         if missing.empty:
-            return "Data-backed", "No missing values remain in the cleaned dashboard dataset."
+            return (
+                "Data-backed",
+                "No missing values remain in the cleaned dashboard dataset.",
+            )
         details = ", ".join(
             f"{name}: {int(value)}" for name, value in missing.items()
         )
@@ -203,7 +206,9 @@ def answer(question: str, data: pd.DataFrame, model, y_test, probabilities):
         )
 
     if "payment method" in q:
-        rates = data.groupby("PaymentMethod")[TARGET].apply(lambda s: s.eq("Yes").mean())
+        rates = data.groupby("PaymentMethod")[TARGET].apply(
+            lambda s: s.eq("Yes").mean()
+        )
         return "Data-backed", (
             "Observed churn by payment method: "
             + "; ".join(f"{name}: {rate:.1%}" for name, rate in rates.items())
@@ -327,7 +332,8 @@ def answer(question: str, data: pd.DataFrame, model, y_test, probabilities):
         return "Extension", (
             "A production extension would add versioned artifacts, scheduled scoring, "
             "data/model drift monitoring, calibration monitoring, fairness checks, "
-            "cost-sensitive thresholding, intervention tracking and retraining governance."
+            "cost-sensitive thresholding, intervention tracking and retraining "
+            "governance."
         )
 
     if "retention" in q or "business impact" in q or "decision" in q:
@@ -368,7 +374,10 @@ st.sidebar.caption(
 
 search = st.text_input(
     "🔎 Search the full question bank",
-    placeholder="Search: churn rate, contract, Logistic Regression, calibration, business impact...",
+    placeholder=(
+        "Search: churn rate, contract, Logistic Regression, "
+        "calibration, business impact..."
+    ),
 )
 sections = list(dict.fromkeys(item["section"] for item in questions))
 section = st.selectbox("Filter by section", ["All 18 sections"] + sections)
@@ -391,7 +400,10 @@ for number, item in enumerate(filtered, start=1):
         st.caption(item["section"])
         st.markdown(f"**Answer status:** '{status}'")
         st.markdown(
-            f'<div class="card"><strong>Evidence-based answer</strong><br>{response}</div>',
+            (
+                f'<div class="card"><strong>Evidence-based answer</strong>'
+                f'<br>{response}</div>'
+            ),
             unsafe_allow_html=True,
         )
 
