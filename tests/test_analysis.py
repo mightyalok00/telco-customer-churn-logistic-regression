@@ -7,9 +7,16 @@ import pandas as pd
 import pytest
 
 from analysis import (
-    ID_COLUMN, add_business_features, build_logistic_pipeline,
-    build_preprocessor, clean_data, coefficient_table,
-    evaluate_binary_model, load_data, risk_segments, threshold_table,
+    ID_COLUMN,
+    add_business_features,
+    build_logistic_pipeline,
+    build_preprocessor,
+    clean_data,
+    coefficient_table,
+    evaluate_binary_model,
+    load_data,
+    risk_segments,
+    threshold_table,
 )
 
 
@@ -18,8 +25,13 @@ def sample_data() -> pd.DataFrame:
     return pd.DataFrame({
         "customerID": [f"C{i:03d}" for i in range(12)],
         "tenure": [1, 3, 6, 9, 12, 18, 24, 30, 36, 48, 60, 72],
-        "TotalCharges": [50, 120, 300, 450, 650, 900, 1200, 1600, 2100, 3000, 4000, 5200],
-        "MonthlyCharges": [50, 40, 50, 50, 54, 60, 55, 53, 58, 62, 67, 72],
+        "TotalCharges": [
+            50, 120, 300, 450, 650, 900, 1200, 1600,
+            2100, 3000, 4000, 5200,
+        ],
+        "MonthlyCharges": [
+            50, 40, 50, 50, 54, 60, 55, 53, 58, 62, 67, 72,
+        ],
         "Contract": [
             "Month-to-month", "Month-to-month", "Month-to-month", "Month-to-month",
             "One year", "One year", "One year", "One year",
@@ -80,13 +92,17 @@ def test_business_features_tolerate_partial_columns() -> None:
 def test_preprocessor_excludes_customer_id() -> None:
     """The customer identifier must not become a model feature."""
     preprocessor = build_preprocessor(sample_data().drop(columns=["Churn"]))
-    assert all(ID_COLUMN not in name for name in preprocessor.get_feature_names_out())
+    assert all(
+        ID_COLUMN not in name
+        for name in preprocessor.get_feature_names_out()
+    )
 
 
 def test_logistic_pipeline_fits_and_handles_unknown_categories() -> None:
     """The pipeline should fit and predict on an unseen category."""
     data = sample_data()
-    X, y = data.drop(columns=["Churn"]), (data["Churn"] == "Yes").astype(int)
+    X = data.drop(columns=["Churn"])
+    y = (data["Churn"] == "Yes").astype(int)
     model = build_logistic_pipeline(X)
     model.fit(X.iloc[:10], y.iloc[:10])
     X_new = X.iloc[[10]].copy()
@@ -120,9 +136,12 @@ def test_binary_metrics_are_computed() -> None:
 def test_threshold_table_has_expected_columns_and_range() -> None:
     """Threshold analysis should evaluate the 0.10-0.90 range."""
     table = threshold_table(
-        pd.Series([0, 0, 1, 1]), np.array([0.10, 0.40, 0.60, 0.90])
+        pd.Series([0, 0, 1, 1]),
+        np.array([0.10, 0.40, 0.60, 0.90]),
     )
-    assert {"threshold", "precision", "recall", "f1", "flagged_rate"} <= set(table.columns)
+    assert {
+        "threshold", "precision", "recall", "f1", "flagged_rate"
+    } <= set(table.columns)
     assert table["threshold"].min() == 0.10
     assert table["threshold"].max() == 0.90
 
@@ -130,11 +149,14 @@ def test_threshold_table_has_expected_columns_and_range() -> None:
 def test_coefficient_table_contains_odds_ratios() -> None:
     """Fitted models should expose coefficient and odds-ratio tables."""
     data = sample_data()
-    X, y = data.drop(columns=["Churn"]), (data["Churn"] == "Yes").astype(int)
+    X = data.drop(columns=["Churn"])
+    y = (data["Churn"] == "Yes").astype(int)
     model = build_logistic_pipeline(X)
     model.fit(X, y)
     table = coefficient_table(model)
-    assert {"feature", "coefficient", "odds_ratio", "abs_coefficient"} <= set(table.columns)
+    assert {
+        "feature", "coefficient", "odds_ratio", "abs_coefficient"
+    } <= set(table.columns)
     assert len(table) > 0
     assert np.isfinite(table["odds_ratio"]).all()
 
@@ -150,5 +172,13 @@ def test_pipeline_has_scaling_and_one_hot_encoding() -> None:
     preprocessor = build_preprocessor(sample_data().drop(columns=["Churn"]))
     assert "num" in preprocessor.named_transformers
     assert "cat" in preprocessor.named_transformers
-    assert preprocessor.named_transformers["num"].named_steps["scaler"].__class__.__name__ == "StandardScaler"
-    assert preprocessor.named_transformers["cat"].named_steps["onehot"].__class__.__name__ == "OneHotEncoder"
+    assert (
+        preprocessor.named_transformers["num"]
+        .named_steps["scaler"].__class__.__name__
+        == "StandardScaler"
+    )
+    assert (
+        preprocessor.named_transformers["cat"]
+        .named_steps["onehot"].__class__.__name__
+        == "OneHotEncoder"
+    )
