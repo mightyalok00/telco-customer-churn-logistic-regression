@@ -8,7 +8,6 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
-from sklearn.model_selection import GridSearchCV, train_test_split
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -16,20 +15,13 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from analysis import (  # noqa: E402
-    DEFAULT_C_VALUES,
-    DEFAULT_CV_FOLDS,
-    DEFAULT_TEST_SIZE,
-    RANDOM_STATE,
     TARGET,
-    add_business_features,
-    build_logistic_pipeline,
-    clean_data,
     coefficient_table,
     evaluate_binary_model,
-    load_data,
     risk_segments,
     threshold_table,
 )
+from model_service import get_project_model  # noqa: E402
 
 DATA_PATH = ROOT / "data" / "raw" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
 QUESTIONS_PATH = ROOT / "docs" / "PROJECT_QUESTIONS.md"
@@ -74,11 +66,6 @@ st.markdown(
 
 
 @st.cache_data(show_spinner=False)
-def load_project_data(path: str) -> pd.DataFrame:
-    return add_business_features(clean_data(load_data(path)))
-
-
-@st.cache_data(show_spinner=False)
 def load_questions(path: str) -> list[dict[str, str]]:
     text = Path(path).read_text(encoding="utf-8")
     rows = []
@@ -90,29 +77,6 @@ def load_questions(path: str) -> list[dict[str, str]]:
             question = re.sub(r"^\d+\.\s+", "", line.strip())
             rows.append({"section": section, "question": question})
     return rows
-
-
-@st.cache_resource(show_spinner="Training the project model for the Q&A evidence...")
-def train_model(data: pd.DataFrame):
-    X = data.drop(columns=[TARGET])
-    y = data[TARGET].eq("Yes").astype(int)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=DEFAULT_TEST_SIZE,
-        stratify=y,
-        random_state=RANDOM_STATE,
-    )
-    search = GridSearchCV(
-        build_logistic_pipeline(X_train),
-        {"model__C": DEFAULT_C_VALUES},
-        scoring="roc_auc",
-        cv=DEFAULT_CV_FOLDS,
-        n_jobs=1,
-        pre_dispatch=1,
-    )
-    search.fit(X_train, y_train)
-    return search, X_test, y_test
 
 
 def answer(question: str, data: pd.DataFrame, model, y_test, probabilities):
@@ -360,9 +324,8 @@ if not QUESTIONS_PATH.exists():
     st.error(f"Question bank not found: {QUESTIONS_PATH}")
     st.stop()
 
-data = load_project_data(str(DATA_PATH))
+model, data, X_test, y_test = get_project_model(str(DATA_PATH))
 questions = load_questions(str(QUESTIONS_PATH))
-model, X_test, y_test = train_model(data)
 probabilities = model.predict_proba(X_test)[:, 1]
 
 st.sidebar.metric("Questions", f"{len(questions)}/157")
