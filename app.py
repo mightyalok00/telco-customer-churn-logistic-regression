@@ -239,33 +239,116 @@ with tabs[1]:
     st.subheader("Customer Explorer")
     filtered = data.copy()
 
-    c1, c2, c3 = st.columns(3)
-    with c1:
+    st.markdown("#### 🔎 Customer filters")
+    st.caption(
+        "Combine multiple filters to create a focused customer cohort. "
+        "Use Reset filters to return to the full dataset."
+    )
+
+    if st.button("↺ Reset customer filters", key="reset_customer_filters"):
+        for key in (
+            "filter_contract",
+            "filter_internet",
+            "filter_payment",
+            "filter_churn",
+            "filter_paperless",
+            "filter_senior",
+        ):
+            st.session_state.pop(key, None)
+        st.rerun()
+
+    f1, f2, f3 = st.columns(3)
+    with f1:
         contract_options = sorted(filtered["Contract"].dropna().unique())
         selected_contracts = st.multiselect(
             "Contract",
             contract_options,
             default=contract_options,
+            key="filter_contract",
         )
-    with c2:
         internet_options = sorted(filtered["InternetService"].dropna().unique())
         selected_internet = st.multiselect(
             "Internet service",
             internet_options,
             default=internet_options,
+            key="filter_internet",
         )
-    with c3:
+    with f2:
+        payment_options = sorted(filtered["PaymentMethod"].dropna().unique())
+        selected_payment = st.multiselect(
+            "Payment method",
+            payment_options,
+            default=payment_options,
+            key="filter_payment",
+        )
+        churn_options = sorted(filtered[TARGET].dropna().unique())
+        selected_churn = st.multiselect(
+            "Observed churn",
+            churn_options,
+            default=churn_options,
+            key="filter_churn",
+        )
+    with f3:
+        paperless_options = sorted(filtered["PaperlessBilling"].dropna().unique())
+        selected_paperless = st.multiselect(
+            "Paperless billing",
+            paperless_options,
+            default=paperless_options,
+            key="filter_paperless",
+        )
+        senior_options = sorted(filtered["SeniorCitizen"].dropna().unique())
+        selected_senior = st.multiselect(
+            "Senior citizen",
+            senior_options,
+            default=senior_options,
+            key="filter_senior",
+            format_func=lambda value: "Yes" if value == 1 else "No",
+        )
+
+    f4, f5, f6 = st.columns(3)
+    with f4:
         tenure_range = st.slider(
             "Tenure (months)",
             0,
             int(filtered["tenure"].max()),
             (0, int(filtered["tenure"].max())),
+            key="filter_tenure",
+        )
+    with f5:
+        monthly_range = st.slider(
+            "Monthly charges",
+            float(filtered["MonthlyCharges"].min()),
+            float(filtered["MonthlyCharges"].max()),
+            (
+                float(filtered["MonthlyCharges"].min()),
+                float(filtered["MonthlyCharges"].max()),
+            ),
+            step=1.0,
+            key="filter_monthly",
+        )
+    with f6:
+        total_range = st.slider(
+            "Total charges",
+            float(filtered["TotalCharges"].min()),
+            float(filtered["TotalCharges"].max()),
+            (
+                float(filtered["TotalCharges"].min()),
+                float(filtered["TotalCharges"].max()),
+            ),
+            step=10.0,
+            key="filter_total",
         )
 
     filtered = filtered[
         filtered["Contract"].isin(selected_contracts)
         & filtered["InternetService"].isin(selected_internet)
+        & filtered["PaymentMethod"].isin(selected_payment)
+        & filtered[TARGET].isin(selected_churn)
+        & filtered["PaperlessBilling"].isin(selected_paperless)
+        & filtered["SeniorCitizen"].isin(selected_senior)
         & filtered["tenure"].between(*tenure_range)
+        & filtered["MonthlyCharges"].between(*monthly_range)
+        & filtered["TotalCharges"].between(*total_range)
     ]
 
     e1, e2, e3 = st.columns(3)
