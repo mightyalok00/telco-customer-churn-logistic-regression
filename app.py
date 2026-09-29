@@ -114,7 +114,8 @@ def train_dashboard_model(
         param_grid={"model__C": DEFAULT_C_VALUES},
         scoring="roc_auc",
         cv=DEFAULT_CV_FOLDS,
-        n_jobs=-1,
+        n_jobs=1,
+        pre_dispatch=1,
         refit=True,
     )
     search.fit(X_train, y_train)
