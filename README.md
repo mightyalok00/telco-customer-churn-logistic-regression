@@ -43,9 +43,9 @@
 
 > **Telco Churn Intelligence — Executive Overview**
 
-![Telco Churn Intelligence dashboard preview](./assets/telco-churn-intelligence-dashboard.jpg)
+![Telco Churn Intelligence dashboard preview](./assets/telco-churn-intelligence-dashboard.svg)
 
-*Live dashboard screenshot: executive KPIs, observed churn distribution, contract-level churn analysis, customer exploration, risk prediction, and model insights.*
+*Dashboard preview showing executive KPIs, churn distribution, contract-level churn analysis, customer exploration, risk prediction, and model insights.*
 
 ---
 
@@ -225,7 +225,7 @@ telco-customer-churn-logistic-regression/
 │   └── config.toml
 │
 ├── assets/
-│   └── telco-churn-intelligence-dashboard.jpg
+│   └── telco-churn-intelligence-dashboard.svg
 │
 ├── data/
 │   ├── README.md
