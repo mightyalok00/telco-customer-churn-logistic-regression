@@ -15,6 +15,8 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from analysis import (  # noqa: E402
+    DEFAULT_C_VALUES,
+    DEFAULT_CV_FOLDS,
     TARGET,
     coefficient_table,
     evaluate_binary_model,
