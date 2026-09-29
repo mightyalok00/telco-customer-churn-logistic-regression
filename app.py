@@ -404,7 +404,7 @@ with tabs[2]:
         submitted = st.form_submit_button("Predict churn risk", type="primary")
 
     if submitted:
-        # Start from a real one-row template so all model-required columns remain present.
+        # Start from a real one-row template so required columns remain present.
         profile = data.drop(columns=[TARGET]).iloc[[0]].copy()
         profile["tenure"] = tenure
         profile["MonthlyCharges"] = monthly
