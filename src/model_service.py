@@ -30,8 +30,6 @@ def get_project_model(
     object,
     object,
     object,
-    object,
-    object,
 ]:
     """Load data and train one shared, memory-bounded project model.
 
@@ -60,4 +58,4 @@ def get_project_model(
     # Keep native BLAS/OpenMP thread pools single-threaded to reduce peak RAM.
     with threadpool_limits(limits=1):
         search.fit(X_train, y_train)
-    return search, data, X_train, X_test, y_train, y_test
+    return search, data, X_test, y_test
