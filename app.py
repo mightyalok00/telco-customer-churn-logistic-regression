@@ -10,7 +10,6 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import GridSearchCV, train_test_split
 
 ROOT = Path(__file__).resolve().parent
 SRC_DIR = ROOT / "src"
@@ -32,6 +31,7 @@ from analysis import (  # noqa: E402
     risk_segments,
     threshold_table,
 )
+from model_service import get_project_model  # noqa: E402
 
 DATA_PATH = ROOT / "data" / "raw" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
 
@@ -95,33 +95,6 @@ def load_dashboard_data(path: str) -> pd.DataFrame:
     return add_business_features(clean_data(load_data(path)))
 
 
-@st.cache_resource(show_spinner="Training the tuned Logistic Regression model...")
-def train_dashboard_model(
-    data: pd.DataFrame,
-) -> tuple[GridSearchCV, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
-    """Train the same tuned model used by the project workflow."""
-    X = data.drop(columns=[TARGET])
-    y = (data[TARGET] == "Yes").astype(int)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=DEFAULT_TEST_SIZE,
-        stratify=y,
-        random_state=RANDOM_STATE,
-    )
-    search = GridSearchCV(
-        build_logistic_pipeline(X_train),
-        param_grid={"model__C": DEFAULT_C_VALUES},
-        scoring="roc_auc",
-        cv=DEFAULT_CV_FOLDS,
-        n_jobs=1,
-        pre_dispatch=1,
-        refit=True,
-    )
-    search.fit(X_train, y_train)
-    return search, X_train, X_test, y_train, y_test
-
-
 def fmt_pct(value: float) -> str:
     """Format a decimal metric as a percentage."""
     return f"{value:.1%}"
@@ -136,8 +109,7 @@ if not DATA_PATH.exists():
     st.error(f"Dataset not found: {DATA_PATH}")
     st.stop()
 
-data = load_dashboard_data(str(DATA_PATH))
-model, X_train, X_test, y_train, y_test = train_dashboard_model(data)
+model, data, X_train, X_test, y_train, y_test = get_project_model(str(DATA_PATH))
 
 test_prob = model.predict_proba(X_test)[:, 1]
 threshold = st.sidebar.slider(
