@@ -15,7 +15,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from analysis import (
+from analysis import (  # noqa: E402
     DEFAULT_C_VALUES,
     DEFAULT_CV_FOLDS,
     DEFAULT_TEST_SIZE,
@@ -29,7 +29,7 @@ from analysis import (
     load_data,
     risk_segments,
     threshold_table,
-)  # noqa: E402
+)
 
 DATA_PATH = ROOT / "data" / "raw" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
 QUESTIONS_PATH = ROOT / "docs" / "PROJECT_QUESTIONS.md"
